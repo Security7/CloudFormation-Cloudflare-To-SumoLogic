@@ -44,6 +44,7 @@
     },
 
     "Resources": {
+
         "CloudFormationFlowDashboard": {
             "Type" : "AWS::CloudWatch::Dashboard",
             "DependsOn": [
@@ -61,7 +62,17 @@
                 }
             }
         },
-        
+
+        "IgniteStepFunction": {
+            "Type": "Custom::LambdaCallout",
+            "DependsOn": ["LambdaStepFunctionIgniter", "StepFunctionLoopCloudflareToSumoLogic"],
+            "Properties": {
+                "ServiceToken": { "Fn::GetAtt" : ["LambdaStepFunctionIgniter", "Arn"] },
+                "step_function_arn": { "Ref": "StepFunctionLoopCloudflareToSumoLogic" },
+                "stack_name": { "Ref": "AWS::StackName"}
+            }
+        },
+
         "LambdaCloudflareToSumoLogic": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleCloudflareToSumoLogic"],
@@ -113,7 +124,7 @@
                 ]
             }
         },
-        
+
         "LambdaStepFunctionIgniter": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionIgniter"],
@@ -172,7 +183,7 @@
                 } ]
             }
         },
-        
+
         "LambdaStepFunctionIterator": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionIterator"],
@@ -217,7 +228,7 @@
                 ]
             }
         },
-        
+
         "LambdaStepFunctionRestart": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionRestart"],
@@ -258,7 +269,7 @@
                 ]
             }
         },
-        
+
         "LambdaStepFunctionStopwatch": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["LambdaStepFunctionStopwatchRole"],
@@ -298,7 +309,7 @@
                 ]
             }
         },
-        
+
         "StepFunctionLoopCloudflareToSumoLogic": {
             "Type": "AWS::StepFunctions::StateMachine",
             "DependsOn": [
@@ -346,7 +357,7 @@
                 ]
             }
         }
-        
+
     },
     "Outputs" : {
 
