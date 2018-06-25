@@ -1,12 +1,12 @@
-"LambdaCloudFlareToSumoLogic": {
+"LambdaCloudflareToSumoLogic": {
             "Type" : "AWS::Lambda::Function",
-            "DependsOn": ["RoleCloudFlareToSumoLogic"],
+            "DependsOn": ["RoleCloudflareToSumoLogic"],
             "Properties" : {
-                "Description" : "This function will get logs from CloudFlare, process them and pass them to Sumo Logic",
-                "FunctionName" : {"Fn::Join": ["", ["CloudFlare-To-SumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "Description" : "This function will get logs from Cloudflare, process them and pass them to Sumo Logic",
+                "FunctionName" : {"Fn::Join": ["", ["Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName" }]]},
                 "Code" : {
                     "S3Bucket": { "Fn::Join": ["", ["net.security7.code", ".", { "Ref": "AWS::Region"}]] },
-                    "S3Key": "CloudFlare-To-SumoLogic.zip"
+                    "S3Key": "Cloudflare-To-SumoLogic.zip"
                 },
                 "Environment" : {
                     "Variables": {
@@ -22,16 +22,16 @@
                 },
                 "Handler" : "index.handler",
                 "MemorySize" : 512,
-                "Role" : {"Fn::GetAtt" : ["RoleCloudFlareToSumoLogic", "Arn"] },
+                "Role" : {"Fn::GetAtt" : ["RoleCloudflareToSumoLogic", "Arn"] },
                 "Runtime" : "nodejs8.10",
                 "Timeout" : 60
             }
         },
 
-        "RoleCloudFlareToSumoLogic": {
+        "RoleCloudflareToSumoLogic": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "CloudFlare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
+                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [

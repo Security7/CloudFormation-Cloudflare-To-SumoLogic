@@ -1,9 +1,9 @@
 "IgniteStepFunction": {
 			"Type": "Custom::LambdaCallout",
-			"DependsOn": ["LambdaStepFunctionIgniter", "StepFunctionLoopCloudFlareToSumoLogic"],
+			"DependsOn": ["LambdaStepFunctionIgniter", "StepFunctionLoopCloudflareToSumoLogic"],
 			"Properties": {
 				"ServiceToken": { "Fn::GetAtt" : ["LambdaStepFunctionIgniter", "Arn"] },
-				"step_function_arn": { "Ref": "StepFunctionLoopCloudFlareToSumoLogic" },
+				"step_function_arn": { "Ref": "StepFunctionLoopCloudflareToSumoLogic" },
 				"stack_name": { "Ref": "AWS::StackName"}
 			}
 		},

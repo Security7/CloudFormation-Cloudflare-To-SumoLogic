@@ -44,11 +44,10 @@
     },
 
     "Resources": {
-
         "CloudFormationFlowDashboard": {
             "Type" : "AWS::CloudWatch::Dashboard",
             "DependsOn": [
-                "LambdaCloudFlareToSumoLogic"
+                "LambdaCloudflareToSumoLogic"
             ],
             "Properties" : {
                 "DashboardName" : {"Fn::Join": ["", ["Log-Loop", "-", { "Ref": "AWS::StackName"}]]},
@@ -56,32 +55,22 @@
                     "Fn::Sub": [
                         "{\r\n    \"widgets\": [\r\n        {\r\n            \"type\": \"metric\",\r\n            \"x\": 0,\r\n            \"y\": 9,\r\n            \"width\": 24,\r\n            \"height\": 3,\r\n            \"properties\": {\r\n                \"view\": \"timeSeries\",\r\n                \"stacked\": false,\r\n                \"metrics\": [\r\n                    [ \"AWS\/Lambda\", \"Errors\", \"FunctionName\", \"${Lambda}\", { \"color\": \"#d62728\", \"stat\": \"Sum\" } ]\r\n                ],\r\n                \"region\": \"us-east-2\",\r\n                \"title\": \"Lambda Error\",\r\n                \"period\": 300\r\n            }\r\n        },\r\n        {\r\n            \"type\": \"metric\",\r\n            \"x\": 0,\r\n            \"y\": 3,\r\n            \"width\": 24,\r\n            \"height\": 6,\r\n            \"properties\": {\r\n                \"view\": \"timeSeries\",\r\n                \"stacked\": false,\r\n                \"metrics\": [\r\n                    [ \"AWS\/Lambda\", \"Invocations\", \"FunctionName\", \"${Lambda}\", { \"stat\": \"Sum\", \"color\": \"#1f77b4\", \"yAxis\": \"right\" } ],\r\n                    [ \".\", \"Duration\", \".\", \".\", { \"stat\": \"Sum\" } ]\r\n                ],\r\n                \"region\": \"us-east-2\",\r\n                \"title\": \"Lambda: Duration & Invocation Count\",\r\n                \"period\": 300\r\n            }\r\n        },\r\n        {\r\n            \"type\": \"metric\",\r\n            \"x\": 0,\r\n            \"y\": 0,\r\n            \"width\": 24,\r\n            \"height\": 3,\r\n            \"properties\": {\r\n                \"view\": \"timeSeries\",\r\n                \"stacked\": false,\r\n                \"metrics\": [\r\n                    [ \"AWS\/States\", \"ProvisionedRefillRate\", \"ServiceMetric\", \"StateTransition\", { \"stat\": \"Sum\" } ],\r\n                    [ \".\", \"ConsumedCapacity\", \".\", \".\", { \"yAxis\": \"right\", \"stat\": \"Sum\" } ]\r\n                ],\r\n                \"region\": \"us-east-2\",\r\n                \"title\": \"SF: Refill Rate & Consumed Capacity\"\r\n            }\r\n        }\r\n    ]\r\n}",
                         {
-                            "Lambda": {"Ref": "LambdaCloudFlareToSumoLogic"}
+                            "Lambda": {"Ref": "LambdaCloudflareToSumoLogic"}
                         }
                     ]
                 }
             }
         },
-
-        "IgniteStepFunction": {
-            "Type": "Custom::LambdaCallout",
-            "DependsOn": ["LambdaStepFunctionIgniter", "StepFunctionLoopCloudFlareToSumoLogic"],
-            "Properties": {
-                "ServiceToken": { "Fn::GetAtt" : ["LambdaStepFunctionIgniter", "Arn"] },
-                "step_function_arn": { "Ref": "StepFunctionLoopCloudFlareToSumoLogic" },
-                "stack_name": { "Ref": "AWS::StackName"}
-            }
-        },
-
-        "LambdaCloudFlareToSumoLogic": {
+        
+        "LambdaCloudflareToSumoLogic": {
             "Type" : "AWS::Lambda::Function",
-            "DependsOn": ["RoleCloudFlareToSumoLogic"],
+            "DependsOn": ["RoleCloudflareToSumoLogic"],
             "Properties" : {
-                "Description" : "This function will get logs from CloudFlare, process them and pass them to Sumo Logic",
-                "FunctionName" : {"Fn::Join": ["", ["CloudFlare-To-SumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "Description" : "This function will get logs from Cloudflare, process them and pass them to Sumo Logic",
+                "FunctionName" : {"Fn::Join": ["", ["Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName" }]]},
                 "Code" : {
                     "S3Bucket": { "Fn::Join": ["", ["net.security7.code", ".", { "Ref": "AWS::Region"}]] },
-                    "S3Key": "CloudFlare-To-SumoLogic.zip"
+                    "S3Key": "Cloudflare-To-SumoLogic.zip"
                 },
                 "Environment" : {
                     "Variables": {
@@ -97,16 +86,16 @@
                 },
                 "Handler" : "index.handler",
                 "MemorySize" : 512,
-                "Role" : {"Fn::GetAtt" : ["RoleCloudFlareToSumoLogic", "Arn"] },
+                "Role" : {"Fn::GetAtt" : ["RoleCloudflareToSumoLogic", "Arn"] },
                 "Runtime" : "nodejs8.10",
                 "Timeout" : 60
             }
         },
 
-        "RoleCloudFlareToSumoLogic": {
+        "RoleCloudflareToSumoLogic": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "CloudFlare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
+                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -124,7 +113,7 @@
                 ]
             }
         },
-
+        
         "LambdaStepFunctionIgniter": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionIgniter"],
@@ -183,7 +172,7 @@
                 } ]
             }
         },
-
+        
         "LambdaStepFunctionIterator": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionIterator"],
@@ -228,7 +217,7 @@
                 ]
             }
         },
-
+        
         "LambdaStepFunctionRestart": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["RoleStepFunctionRestart"],
@@ -269,7 +258,7 @@
                 ]
             }
         },
-
+        
         "LambdaStepFunctionStopwatch": {
             "Type" : "AWS::Lambda::Function",
             "DependsOn": ["LambdaStepFunctionStopwatchRole"],
@@ -309,26 +298,26 @@
                 ]
             }
         },
-
-        "StepFunctionLoopCloudFlareToSumoLogic": {
+        
+        "StepFunctionLoopCloudflareToSumoLogic": {
             "Type": "AWS::StepFunctions::StateMachine",
             "DependsOn": [
-                "StepFunctionLoopCloudFlareToSumoLogicRole",
-                "LambdaCloudFlareToSumoLogic",
+                "StepFunctionLoopCloudflareToSumoLogicRole",
+                "LambdaCloudflareToSumoLogic",
                 "LambdaStepFunctionIterator",
                 "LambdaStepFunctionRestart",
                 "LambdaStepFunctionStopwatch"
             ],
             "Properties": {
-                "StateMachineName": {"Fn::Join": ["", ["LoopCloudFlareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
-                "RoleArn": {"Fn::GetAtt" : ["StepFunctionLoopCloudFlareToSumoLogicRole", "Arn"] },
+                "StateMachineName": {"Fn::Join": ["", ["LoopCloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "RoleArn": {"Fn::GetAtt" : ["StepFunctionLoopCloudflareToSumoLogicRole", "Arn"] },
                 "DefinitionString": {
                     "Fn::Sub": [
-                        "{\r\n    \"Comment\": \"Infinite Loop\",\r\n    \"StartAt\": \"Iterator\",\r\n    \"States\": {\r\n        \"Iterator\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaStepFunctionIteratorArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Stopwatch\"\r\n        },\r\n        \"Stopwatch\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaStepFunctionStopwatchArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Did We Rached Loop Limit?\"\r\n        },\r\n        \"Did We Rached Loop Limit?\": {\r\n            \"Type\": \"Choice\",\r\n            \"Choices\": [\r\n                {\r\n                    \"Variable\": \"$.count_limit\",\r\n                    \"BooleanEquals\": true,\r\n                    \"Next\": \"Is It One Year Already?\"\r\n                }\r\n            ],\r\n            \"Default\": \"Restart SF\"\r\n        },\r\n        \"Is It One Year Already?\": {\r\n            \"Type\": \"Choice\",\r\n            \"Choices\": [\r\n                {\r\n                    \"Variable\": \"$.year_limit\",\r\n                    \"BooleanEquals\": true,\r\n                    \"Next\": \"Restart SF\"\r\n                }\r\n            ],\r\n            \"Default\": \"CloudFlare-To-SumoLogic\"\r\n        },\r\n        \"CloudFlare-To-SumoLogic\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaCloudFlareToSumoLogicArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Wait 1min\"\r\n        },\r\n        \"Wait 1min\": {\r\n            \"Type\": \"Wait\",\r\n            \"Seconds\": 60,\r\n            \"Next\": \"Iterator\"\r\n        },\r\n        \"Restart SF\": {\r\n          \"Type\": \"Task\",\r\n          \"Resource\": \"${LambdaStepFunctionRestartArn}\",\r\n          \"End\": true \r\n        }\r\n    }\r\n}",
+                        "{\r\n    \"Comment\": \"Infinite Loop\",\r\n    \"StartAt\": \"Iterator\",\r\n    \"States\": {\r\n        \"Iterator\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaStepFunctionIteratorArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Stopwatch\"\r\n        },\r\n        \"Stopwatch\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaStepFunctionStopwatchArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Did We Rached Loop Limit?\"\r\n        },\r\n        \"Did We Rached Loop Limit?\": {\r\n            \"Type\": \"Choice\",\r\n            \"Choices\": [\r\n                {\r\n                    \"Variable\": \"$.count_limit\",\r\n                    \"BooleanEquals\": true,\r\n                    \"Next\": \"Is It One Year Already?\"\r\n                }\r\n            ],\r\n            \"Default\": \"Restart SF\"\r\n        },\r\n        \"Is It One Year Already?\": {\r\n            \"Type\": \"Choice\",\r\n            \"Choices\": [\r\n                {\r\n                    \"Variable\": \"$.year_limit\",\r\n                    \"BooleanEquals\": true,\r\n                    \"Next\": \"Restart SF\"\r\n                }\r\n            ],\r\n            \"Default\": \"Cloudflare-To-SumoLogic\"\r\n        },\r\n        \"Cloudflare-To-SumoLogic\": {\r\n            \"Type\": \"Task\",\r\n            \"Resource\": \"${LambdaCloudflareToSumoLogicArn}\",\r\n            \"ResultPath\": \"$\",\r\n            \"Next\": \"Wait 1min\"\r\n        },\r\n        \"Wait 1min\": {\r\n            \"Type\": \"Wait\",\r\n            \"Seconds\": 60,\r\n            \"Next\": \"Iterator\"\r\n        },\r\n        \"Restart SF\": {\r\n          \"Type\": \"Task\",\r\n          \"Resource\": \"${LambdaStepFunctionRestartArn}\",\r\n          \"End\": true \r\n        }\r\n    }\r\n}",
                         {
                             "LambdaStepFunctionIteratorArn": {"Fn::GetAtt": ["LambdaStepFunctionIterator", "Arn"] },
                             "LambdaStepFunctionStopwatchArn": {"Fn::GetAtt": ["LambdaStepFunctionStopwatch", "Arn"] },
-                            "LambdaCloudFlareToSumoLogicArn": {"Fn::GetAtt": ["LambdaCloudFlareToSumoLogic", "Arn"] },
+                            "LambdaCloudflareToSumoLogicArn": {"Fn::GetAtt": ["LambdaCloudflareToSumoLogic", "Arn"] },
                             "LambdaStepFunctionRestartArn": {"Fn::GetAtt": ["LambdaStepFunctionRestart", "Arn"] }
                         }
                     ]
@@ -336,10 +325,10 @@
             }
         },
 
-        "StepFunctionLoopCloudFlareToSumoLogicRole": {
+        "StepFunctionLoopCloudflareToSumoLogicRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": {"Fn::Join": ["", ["StepFunction", "_", "LoopCloudFlareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "RoleName": {"Fn::Join": ["", ["StepFunction", "_", "LoopCloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -357,7 +346,7 @@
                 ]
             }
         }
-
+        
     },
     "Outputs" : {
 
