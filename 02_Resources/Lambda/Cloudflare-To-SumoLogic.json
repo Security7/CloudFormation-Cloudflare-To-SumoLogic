@@ -23,7 +23,7 @@
                 "Handler" : "index.handler",
                 "MemorySize" : 512,
                 "Role" : {"Fn::GetAtt" : ["RoleCloudflareToSumoLogic", "Arn"] },
-                "Runtime" : "nodejs8.10",
+                "Runtime" : "nodejs6.10",
                 "Timeout" : 60
             }
         },
