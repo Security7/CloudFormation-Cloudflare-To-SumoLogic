@@ -14,14 +14,36 @@
 LOCAL=$(pwd);
 
 #
-#   Create the bucket name based on the region.
-#
-BUCKET=net.security7.cloudformations;
-
-#
 #   Create the CF file name to be copied
 #
 FILE=Cloudflare-to-SumoLogic.json;
+
+#
+#   This variable is used to extend the name of the bucket that holds the zipped
+#   source code so it dose not colid with the production buckets. Since
+#   S3 have global names.
+#
+BUCKET_ANTI_COLISION_NAME="";
+
+#
+#   If the stage is anything but production, we use the stage value for the
+#   custom name of the bucket. This way if you want to deploy this 
+#   on another account, you can set your own name.
+#
+if [ $STAGE != "production" ]; then
+
+    #
+    #   Add the dot as section seapration here so it is easier to manage 
+    #   when we have the empty string.
+    #
+    BUCKET_ANTI_COLISION_NAME=.$STAGE;
+    
+fi
+
+#
+#   Create the base name of the bucket that is then used across the script
+#
+BUCKET=net.security7.cloudformations$BUCKET_ANTI_COLISION_NAME;
 
 #    __  __              _____   _   _
 #   |  \/  |     /\     |_   _| | \ | |
