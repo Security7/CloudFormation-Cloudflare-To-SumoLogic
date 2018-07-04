@@ -1,5 +1,11 @@
-{
     "Parameters": {
+
+        "Environment": {
+            "Description": "Select which environment are you deploying.",
+            "Type": "String",
+            "AllowedValues" : ["production", "development"],
+            "Default": "production"
+        },
 
         "CloudflareAuthEmail": {
             "Description" : "Provide the email used in your account",

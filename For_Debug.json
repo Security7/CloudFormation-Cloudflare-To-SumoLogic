@@ -1,52 +1,61 @@
 {
 	"Parameters": {
 
-		"arn": {
-			"Description" : "ARN",
-			"Type" : "String"
-		},
-
-		"Password": {
-			"Description" : "ARN",
-			"Type" : "String"
-		},
-
-		"ConfirmPassword": {
-			"Description" : "ARN",
-			"Type" : "String"
-		}
+		"Environment": {
+            "Description": "Select which environment are you deploying.",
+            "Type": "String",
+            "AllowedValues" : ["production", "development"],
+            "Default": "production"
+        }
 
 
 	},
 
+	"Conditions" : {
+		"Development" : {"Fn::Equals" : [{"Ref" : "Environment"}, "development"]}
+  	},
+
 	"Resources": {
 
-		"TestPasswords": {
-			"Type": "Custom::LambdaCallout",
-			"Properties": {
-				"ServiceToken": "arn:aws:lambda:us-east-2:200573525486:function:Step_Function_Igniter",
-				"Password": {
-					"Ref": "Password"
-				},
-				"ConfirmPassword": {
-					"Ref": "ConfirmPassword"
-				},
-				"ble": "hello"
-			}
-		},
+"LambdaCloudflareToSumoLogic": {
+            "Type" : "AWS::Lambda::Function",
+            "DependsOn": ["RoleCloudflareToSumoLogic"],
+            "Properties" : {
+                "Description" : "This function will get logs from Cloudflare, process them and pass them to Sumo Logic",
+                "FunctionName" : {"Fn::Join": ["", ["Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "Code" : {
+                    "S3Bucket": { "Fn::Join": ["", ["net.security7.code", { "Fn::If" : ["Development", ".development", "" ] }, ".", { "Ref": "AWS::Region"}]] },
+                    "S3Key": "Cloudflare-To-SumoLogic.zip"
+                },
+                "Handler" : "index.handler",
+                "MemorySize" : 512,
+                "Role" : {"Fn::GetAtt" : ["RoleCloudflareToSumoLogic", "Arn"] },
+                "Runtime" : "nodejs6.10",
+                "Timeout" : 60
+            }
+        },
 
-		"TestPasswords2": {
-			"Type": "Custom::LambdaCallout",
-			"Properties": {
-				"ServiceToken": "arn:aws:lambda:us-east-2:200573525486:function:Step_Function_Igniter",
-				"Password": {
-					"Ref": "Password"
-				},
-				"ConfirmPassword": {
-					"Ref": "ConfirmPassword"
-				}
-			}
-		}
+        "RoleCloudflareToSumoLogic": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                ]
+            }
+        }
 
 	},
 	"Outputs" : {
