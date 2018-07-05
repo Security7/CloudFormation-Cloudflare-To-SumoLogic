@@ -3,7 +3,7 @@
             "DependsOn": ["LambdaStepFunctionStopwatchRole"],
             "Properties" : {
                 "Description" : "This function is used to check if the Step Function is running more then 1 year.",
-                "FunctionName" : {"Fn::Join": ["", ["Step_Function_Stopwatch", "-", { "Ref": "AWS::StackName"}]]},
+                "FunctionName" : {"Fn::Join": ["", ["Stopwatch", "-", { "Ref": "AWS::StackName"}]]},
                 "Code" : {
                     "S3Bucket": { "Fn::Join": ["", ["net.security7.code", { "Fn::If" : ["Development", ".development", "" ] }, ".", { "Ref": "AWS::Region"}]] },
                     "S3Key": "Step_Function_Stopwatch.zip"
@@ -19,7 +19,7 @@
         "LambdaStepFunctionStopwatchRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": {"Fn::Join": ["", ["Lambda", "_", "Step_Function_Stopwatch", "-", { "Ref": "AWS::StackName"}]]},
+                "RoleName": {"Fn::Join": ["", ["Stopwatch", "-", { "Ref": "AWS::StackName"}]]},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
