@@ -31,7 +31,7 @@
         "RoleCloudflareToSumoLogic": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": { "Fn::Join": ["", ["Lambda", "_", "Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
+                "RoleName": { "Fn::Join": ["", ["Cloudflare-To-SumoLogic", "-", { "Ref": "AWS::StackName"}]] },
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [

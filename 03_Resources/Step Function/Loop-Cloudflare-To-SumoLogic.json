@@ -8,7 +8,7 @@
                 "LambdaStepFunctionStopwatch"
             ],
             "Properties": {
-                "StateMachineName": {"Fn::Join": ["", ["LoopCloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "StateMachineName": {"Fn::Join": ["", ["CloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
                 "RoleArn": {"Fn::GetAtt" : ["StepFunctionLoopCloudflareToSumoLogicRole", "Arn"] },
                 "DefinitionString": {
                     "Fn::Sub": [
@@ -27,7 +27,7 @@
         "StepFunctionLoopCloudflareToSumoLogicRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": {"Fn::Join": ["", ["StepFunction", "_", "LoopCloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
+                "RoleName": {"Fn::Join": ["", ["CloudflareToSumoLogic", "-", { "Ref": "AWS::StackName" }]]},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [

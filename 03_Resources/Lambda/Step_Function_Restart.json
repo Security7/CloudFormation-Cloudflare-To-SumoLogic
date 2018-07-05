@@ -3,7 +3,7 @@
             "DependsOn": ["RoleStepFunctionRestart"],
             "Properties" : {
                 "Description" : "This function is used to restart a Step Function that reached its limits",
-                "FunctionName" : {"Fn::Join": ["", ["Step_Function_Restart", "-", { "Ref": "AWS::StackName"}]]},
+                "FunctionName" : {"Fn::Join": ["", ["Restart", "-", { "Ref": "AWS::StackName"}]]},
                 "Code" : {
                     "S3Bucket": { "Fn::Join": ["", ["net.security7.code", { "Fn::If" : ["Development", ".development", "" ] }, ".", { "Ref": "AWS::Region"}]] },
                     "S3Key": "Step_Function_Restart.zip"
@@ -19,7 +19,7 @@
         "RoleStepFunctionRestart": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": {"Fn::Join": ["", ["Lambda", "_", "Step_Function_Restart", "-", { "Ref": "AWS::StackName"}]]},
+                "RoleName": {"Fn::Join": ["", ["Restart", "-", { "Ref": "AWS::StackName"}]]},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [

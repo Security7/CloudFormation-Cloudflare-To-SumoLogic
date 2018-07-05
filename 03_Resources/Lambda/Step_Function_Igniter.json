@@ -3,7 +3,7 @@
             "DependsOn": ["RoleStepFunctionIgniter"],
             "Properties" : {
                 "Description" : "This function is used to check and increment any counter in a Step Function",
-                "FunctionName" : { "Fn::Join": ["", ["Step_Function_Igniter", "-", { "Ref": "AWS::StackName"}]]},
+                "FunctionName" : { "Fn::Join": ["", ["Igniter", "-", { "Ref": "AWS::StackName"}]]},
                 "Code" : {
                     "S3Bucket": { "Fn::Join": ["", ["net.security7.code", { "Fn::If" : ["Development", ".development", "" ] }, ".", { "Ref": "AWS::Region"}]] },
                     "S3Key": "Step_Function_Igniter.zip"
@@ -24,7 +24,7 @@
         "RoleStepFunctionIgniter": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": {"Fn::Join": ["", ["Lambda", "_", "Step_Function_Igniter", "-", { "Ref": "AWS::StackName"}]]},
+                "RoleName": {"Fn::Join": ["", ["Igniter", "-", { "Ref": "AWS::StackName"}]]},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -41,7 +41,7 @@
                     "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
                 ],
                 "Policies": [ {
-                    "PolicyName": { "Fn::Join": ["", ["Invocke_Lambda_restart", "-", { "Ref": "AWS::StackName"}]]},
+                    "PolicyName": { "Fn::Join": ["", ["Restart", "-", { "Ref": "AWS::StackName"}]]},
                     "PolicyDocument": {
                          "Version": "2012-10-17",
                          "Statement": [
