@@ -27,17 +27,17 @@ BUCKET_ANTI_COLISION_NAME="";
 
 #
 #   If the stage is anything but production, we use the stage value for the
-#   custom name of the bucket. This way if you want to deploy this 
+#   custom name of the bucket. This way if you want to deploy this
 #   on another account, you can set your own name.
 #
 if [ $STAGE != "production" ]; then
 
     #
-    #   Add the dot as section seapration here so it is easier to manage 
+    #   Add the dot as section separation here so it is easier to manage
     #   when we have the empty string.
     #
     BUCKET_ANTI_COLISION_NAME=.$STAGE;
-    
+
 fi
 
 #
@@ -67,18 +67,18 @@ if ! aws s3 ls | tail -n +1 | grep -q "$BUCKET"; then
     #   <>> UI information.
     #
     echo "  Creating bucket: $BUCKET.";
-    
+
     #
     #   Create the bucket if is missing.
     #
     aws s3 mb s3://$BUCKET --region "us-east-2" > /dev/null;
-    
+
     #
     #   Set read access to the bucket so if people want they can list
     #   the content of the bucket and see what zip files do we provide
     #
     aws s3api put-bucket-acl --acl public-read --bucket $BUCKET
-    
+
 fi
 
 #
@@ -100,7 +100,7 @@ echo "";
 aws s3 cp $FILE s3://$BUCKET/$FILE;
 
 #
-#   Set the object to be publicly readeble and only that so people can 
+#   Set the object to be publicly readeble and only that so people can
 #   dowload it but can't change it.
 #
 aws s3api put-object-acl --key $FILE --acl public-read --bucket $BUCKET;
